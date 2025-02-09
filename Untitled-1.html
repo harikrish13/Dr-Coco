@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mini Dr. Chatbot</title>
+
+  <!-- Link to Bootstrap for responsive layout -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Google Fonts for a modern font style -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+
+  
+</head>
+<body>
+
+  <!-- Main chat container -->
+  <div class="chat-container">
+    <h1 class="text-center mb-4">Dr. Coco</h1>
+    <div class="chat-box" id="chatBox">
+
+        <div class="typing-indicator" id="typingIndicator">
+            <h6>Dr. Coco is typing</h6>
+            <span class="dot"></span>
+            <span class="dot"></span>
+            <span class="dot"></span>
+        </div>
+    </div>
+
+    <div class="input-area">
+      <input type="text" id="userInput" placeholder="Type your message here..." />
+      <button onclick="sendMessage()">Send</button>
+    </div>
+  </div>
+
+  <!-- Script to handle chat functionality -->
+  <script>
+    // Function to send message and handle response
+    function sendMessage() {
+      const userMessage = document.getElementById("userInput").value;
+      if (!userMessage.trim()) return;
+
+      // Display user message
+      displayMessage(userMessage, 'user');
+
+      // Clear input field
+      document.getElementById("userInput").value = "";
+
+      // Show typing indicator
+      document.getElementById("typingIndicator").style.display = "flex";
+      document.getElementById("chatBox").appendChild(document.getElementById("typingIndicator"));
+      //scrollChatToBottom();
+
+      // API request to backend (Flask server)
+      fetch('http://127.0.0.1:5001/chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ message: userMessage })
+      })
+      .then(response => response.json())
+      .then(data => {
+        document.getElementById("typingIndicator").style.display = "none";
+        const botMessage = data['message reply'];
+        displayMessage(botMessage, 'bot');
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        document.getElementById("typingIndicator").style.display = "none";
+        displayMessage("Sorry, something went wrong. Please try again later.", 'bot');
+      });
+    }
+
+    // Function to display message in chat
+    function displayMessage(message, sender) {
+      const chatBox = document.getElementById("chatBox");
+      const messageContainer = document.createElement("div");
+      messageContainer.classList.add(sender + "-message");
+      const messageText = document.createElement("p");
+      messageText.innerHTML = message;
+      messageContainer.appendChild(messageText);
+      chatBox.appendChild(messageContainer);
+      chatBox.scrollTop = chatBox.scrollHeight; // Scroll to bottom
+    }
+  </script>
+
+  <!-- Bootstrap JS (for any components that require it) -->
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
+</body>
+</html>
