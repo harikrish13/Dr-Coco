@@ -15,7 +15,7 @@ CORS(app)
 
 # OpenAI API client
 #openai_api_key = os.getenv("OPENAI_API_KEY")
-client = OpenAI(api_key="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")
+client = OpenAI(api_key="")
 
 # OpenAI Assistant Configuration
 assistant = client.beta.assistants.create(
