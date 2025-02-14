@@ -5,9 +5,8 @@ from dotenv import load_dotenv
 # Load environment variables from .env file
 load_dotenv()
 
-#openai_api_key = os.getenv("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")
 
-client = OpenAI(api_key= "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")
+client = OpenAI(api_key= "")
 existing_vector_stores = client.beta.vector_stores.list()
 vector_store = None
 for store in existing_vector_stores.data:
